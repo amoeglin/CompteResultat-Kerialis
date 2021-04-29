@@ -214,6 +214,9 @@ namespace CompteResultat
             string userName = "";
             string uploadDirectory = "";
             bool hasErr = false;
+            bool forceCompanySubsid = chkForceCompSubsid.Checked;
+            bool updateGroupes = chkGroupes.Checked;
+            bool updateExperience = chkExp.Checked;
 
             try
             {
@@ -405,7 +408,7 @@ namespace CompteResultat
                 BLImport imp = new BLImport(userName, newPrestCSV, newCotCSV, newDemoCSV, newOtherFieldsCSV, newCotPrevCSV, newSinistrePrevCSV, newDecompPrevCSV,
                     configStringPrest, configStringDemo, configStringCot, configStringOtherFields, configStringCotPrev, configStringSinistrPrev, configStringDecompPrev,
                     tableForOtherFields, importName, csvSep, uploadDirectory, uploadPathPrest, uploadPathCot, uploadPathDemo,
-                    uploadPathCotPrev, uploadPathSinistrPrev, uploadPathDecompPrev, newExpCSV, configStringExp, uploadPathExp);
+                    uploadPathCotPrev, uploadPathSinistrPrev, uploadPathDecompPrev, newExpCSV, configStringExp, uploadPathExp, forceCompanySubsid, updateGroupes, updateExperience);
 
                 imp.DoImport();
 

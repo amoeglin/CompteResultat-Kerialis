@@ -58,6 +58,23 @@ namespace CompteResultat.DAL
             }
         }
 
+        public static void TruncateTable()
+        {
+            try
+            {
+                using (var context = new CompteResultatEntities())
+                {
+                    //context.Database.ExecuteSqlCommand("TRUNCATE TABLE GroupGarantySante;");
+                    context.Database.ExecuteSqlCommand("Delete From GroupGarantySante Where AssureurName Not Like 'Paramètres par défaut'");
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
+
         public static int InsertGroupGaranty(GroupGarantySante ggs)
         {
             try

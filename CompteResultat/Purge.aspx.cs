@@ -43,6 +43,9 @@ namespace CompteResultat
                         context.Database.ExecuteSqlCommand("DELETE FROM[CompteResultat].[dbo].[ReAssureur]");
                         context.Database.ExecuteSqlCommand("DELETE FROM[CompteResultat].[dbo].[Assureur]");
 
+                        context.Database.ExecuteSqlCommand("truncate table[CompteResultat].[dbo].[_TempExpData]");
+                        context.Database.ExecuteSqlCommand("truncate table[CompteResultat].[dbo].[GroupGarantySante]");
+
                         //context.SaveChanges();
                         dbContextTransaction.Commit();
                     }

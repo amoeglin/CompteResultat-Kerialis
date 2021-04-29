@@ -281,6 +281,23 @@ namespace CompteResultat
             }
         }
 
+        protected void cmdRecreate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                BLGroupsAndGaranties.RecreateGroupsGarantiesSanteFromPresta();                
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+
+                var myCustomValidator = new CustomValidator();
+                myCustomValidator.IsValid = false;
+                myCustomValidator.ErrorMessage = ex.Message;
+                Page.Validators.Add(myCustomValidator);
+            }
+        }
+
         protected void lbAssur_DataBound(object sender, EventArgs e)
         {
             try

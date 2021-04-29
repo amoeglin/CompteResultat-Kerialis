@@ -17,6 +17,15 @@ namespace CompteResultat.DAL
 
     }
 
+    public class GroupesGarantiesSante
+    {
+        public string AssureurName { get; set; }
+        public string GroupName { get; set; }
+        public string GarantyName { get; set; }
+        public string CodeActe { get; set; }        
+        public int OrderNumber { get; set; }
+    }
+
     public class ExcelGlobalDecompteData
     {
         public string Assureur { get; set; }

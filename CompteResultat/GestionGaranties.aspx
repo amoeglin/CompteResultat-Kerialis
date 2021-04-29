@@ -12,6 +12,10 @@
             $("#cmdImport").click(function (evt) {
                 $("#divLoading").css("display", "block");
             });  
+
+            $("#cmdRecreate").click(function (evt) {
+                $("#divLoading").css("display", "block");
+            });
         }); 
      
    </script>
@@ -20,7 +24,7 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-    <div style="float: left; width: 400px;">
+    <div style="float: left; width: 500px;">
         <h1><asp:Literal  ID="Literal9" runat="server">Liste des assureurs :</asp:Literal> </h1> 
         
         <asp:CheckBox ID="chkAssur" runat="server" Checked="false" AutoPostBack="true"
@@ -41,6 +45,10 @@
             <%-- <input type="submit" ID="cmdDelete" name="cmdDelete" class="ButtonBigRed ButtonInline" style="width:90px;" value="Supprimer" runat="server" />  --%>
         </div>
 
+        <div style="margin-top:5px; float:right;">
+            <asp:Button CssClass="ButtonBigBlue ButtonInline" style="margin-right:0px; width:320px;" ID="cmdRecreate" runat="server" Text="REGENERER à partir des PRESTATIONS" ClientIDMode="Static" OnClick="cmdRecreate_Click" />  
+        </div>
+
         <div runat="server" id="divLoading"  style="display:none" ClientIDMode="Static" >
             <img width="100px" height="100px" style="margin: 20px 5px 10px 140px;" src="Images/ajax-loader.gif" />
         </div>
@@ -56,7 +64,7 @@
 
         <h1><asp:Literal  ID="Literal1" runat="server">Groupes et garanties :</asp:Literal> </h1>  
         
-        <asp:TreeView style="margin-top:15px;" ID="tvGaranties" CssClass="TreeView" Width="350" Height="500" runat="server" >                
+        <asp:TreeView style="margin-top:15px;" ID="tvGaranties" CssClass="TreeView" Width="400" Height="500" runat="server" >                
             <NodeStyle CssClass="NodeStyle" ForeColor="#3A4F63"></NodeStyle>
         </asp:TreeView>       
 

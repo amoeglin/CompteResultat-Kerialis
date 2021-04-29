@@ -38,7 +38,7 @@
     
     <div style="float:left; margin-top: -15px;">
 
-    <table>
+        <table>
         <tr style="height:40px; text-align:left; vertical-align:text-top; margin-bottom: 10px; margin-top:200px; ">
             <td style=" margin-top:200px; " colspan="2"> 
                 <h1><asp:Literal  ID="Literal8" runat="server">Import Santé</asp:Literal> </h1>                                 
@@ -214,6 +214,36 @@
 
     </div>
     
+    <div id="divImportSante"    >
+        <table  border="0" >
+            <tr style="height:23px;" ></tr>
+            <tr >
+                <td style="width: 30px;">
+                <td style="text-align:left; width: 400px;">
+                    <label>OPTIONS DE L'IMPORT </label>                  
+                </td>                      
+            </tr>
+            <tr >
+                <td >
+                <td style="">
+                    <asp:CheckBox Checked="false" ID="chkForceCompSubsid" runat="server" Text=" REGROUPER PAR PRODUIT sans entreprise et filliale " Font-Size="Small" />              
+                </td>                      
+            </tr>
+            <tr >
+                <td >
+                <td style="">
+                    <asp:CheckBox Checked="true" ID="chkExp" runat="server" Text=" METTRE A JOUR les Prestations EXPERIENCE SANTE " Font-Size="Small" />              
+                </td>                      
+            </tr>
+            <tr >
+                <td >
+                <td style="">
+                    <asp:CheckBox Checked="true" ID="chkGroupes" runat="server" Text=" METTRE A JOUR les GROUPES et GARANTIES SANTE " Font-Size="Small" />              
+                </td>                      
+            </tr>
+        </table>
+    </div>
+
     <div runat="server" id="divLoading"  style="display:none" ClientIDMode="Static" >
         <img width="100px" height="100px" style="margin: 70px 50px 10px 50px;" src="Images/ajax-loader.gif" />
     </div>

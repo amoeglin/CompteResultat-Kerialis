@@ -51,6 +51,10 @@ namespace CompteResultat.BL
         public string UploadPathExp { get; set; }
         public int ImportId { get; set; }
 
+        public bool ForceCompanySubsid { get; set; }
+        public bool UpdateGroupes { get; set; }
+        public bool UpdateExperience { get; set; }
+
         #endregion
 
         public BLImport(string userName, string newPrestCSV, string newCotCSV, string newDemoCSV, string newOtherFieldsCSV,
@@ -59,7 +63,8 @@ namespace CompteResultat.BL
             string configStringCotPrev, string configStringSinistrPrev, string configStringDecompPrev,
             string tableForOtherFields, string importName, string csvSep, string uploadPath, 
             string uploadPathPrest, string uploadPathCot, string uploadPathDemo, string uploadPathCotPrev, string uploadPathSinistrPrev, 
-            string uploadPathDecompPrev, string newExpCSV, string configStringExp, string uploadPathExp)
+            string uploadPathDecompPrev, string newExpCSV, string configStringExp, string uploadPathExp, 
+            bool forceCompanySubsid, bool updateGroupes, bool updateExperience)
         {
             CSVSep = csvSep;
             ImportName = importName;
@@ -89,6 +94,9 @@ namespace CompteResultat.BL
             UploadPathSinistrPrev = uploadPathSinistrPrev;
             UploadPathDecompPrev = uploadPathDecompPrev;
             UploadPathExp = uploadPathExp;
+            ForceCompanySubsid = forceCompanySubsid;
+            UpdateExperience = updateExperience;
+            UpdateGroupes = updateGroupes;
         }
 
         public BLImport(int importId)
@@ -123,7 +131,7 @@ namespace CompteResultat.BL
                 
                 if (File.Exists(UploadPathPrest))
                 {
-                    TransformFile(UploadPathPrest, CSVSep, ConfigStringPrest, NewPrestCSV, "Id", importId);
+                    TransformFile(UploadPathPrest, CSVSep, ConfigStringPrest, NewPrestCSV, "Id", importId, ForceCompanySubsid);
                     Thread.Sleep(500);
                     if (File.Exists(NewPrestCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewPrestCSV, ImportId);
@@ -131,7 +139,7 @@ namespace CompteResultat.BL
 
                 if (File.Exists(UploadPathCot))
                 {
-                    TransformFile(UploadPathCot, CSVSep, ConfigStringCot, NewCotCSV, "Id", importId);
+                    TransformFile(UploadPathCot, CSVSep, ConfigStringCot, NewCotCSV, "Id", importId, ForceCompanySubsid);
                     Thread.Sleep(500);
                     if (File.Exists(NewCotCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewCotCSV, ImportId);
@@ -139,7 +147,7 @@ namespace CompteResultat.BL
 
                 if (File.Exists(UploadPathDemo))
                 {
-                    TransformFile(UploadPathDemo, CSVSep, ConfigStringDemo, NewDemoCSV, "Id", importId);
+                    TransformFile(UploadPathDemo, CSVSep, ConfigStringDemo, NewDemoCSV, "Id", importId, ForceCompanySubsid);
                     Thread.Sleep(500);
                     if (File.Exists(NewDemoCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewDemoCSV, ImportId);
@@ -554,6 +562,9 @@ namespace CompteResultat.BL
 
                 // ### maybe do something with the data in the _TempOtherFields Table => calculations
 
+                if(UpdateGroupes)
+                    BLGroupsAndGaranties.RecreateGroupsGarantiesSanteFromPresta();
+
                 //everything went well, we delete the corresponding data from the Temp Table
                 C_TempOtherFields.DeleteRowsWithImportId(ImportId);
 
@@ -732,7 +743,7 @@ namespace CompteResultat.BL
         }
 
         public static void TransformFile(string inputFile, string csvSep, string configString,
-            string saveLocation, string leadingIdField = "", int importId = 0)
+            string saveLocation, string leadingIdField = "", int importId = 0, bool forceCompanySubsid = false)
         {
             try
             {
@@ -851,11 +862,19 @@ namespace CompteResultat.BL
 
                         foreach (KeyValuePair<int, int> entry in dictConfigMappings)
                         {
+                            //string contractId = 
                             if (entry.Value == C.cEMPTYVAL)
                                 newLine += ";";
                             else
-                            {
-                                newLine += cols[entry.Value] + C.cVALSEP;
+                            { 
+                                //### if checkbox "Contrat sans entreprise et filiale" selected:
+                                if(forceCompanySubsid && (entry.Key == 2 || entry.Key == 3))
+                                {
+                                    newLine += cols[1].Trim() + C.cVALSEP;
+                                }
+                                else
+                                    newLine += cols[entry.Value].Trim() + C.cVALSEP;
+
                             }
                         }
 

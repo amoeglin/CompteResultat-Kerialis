@@ -23,6 +23,36 @@ namespace CompteResultat.BL
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public static void RecreateGroupsGarantiesSanteFromPresta()
+        {
+            try
+            {
+                //truncate table GroupGarantySante
+                GroupGarantySante.TruncateTable();
+
+                //get data from PrestSante
+                List<GroupesGarantiesSante> GroupGarantyList = PrestSante.GetGroupGarantyList();
+
+                //add data to GroupGarantySante
+                // ### Paramètres par défaut
+                foreach (GroupesGarantiesSante item in GroupGarantyList)
+                {
+                    int id = GroupGarantySante.InsertGroupGaranty(new GroupGarantySante
+                    {
+                        AssureurName = item.AssureurName,
+                        GroupName = item.GroupName,
+                        GarantyName = item.GarantyName,
+                        CodeActe = item.CodeActe,
+                        OrderNumber = 1
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
 
         public static void ImportGroupsGarantiesSanteForAssureur(string assureurName, string excelFilePath, bool firstRowAsColumnNames)
         {

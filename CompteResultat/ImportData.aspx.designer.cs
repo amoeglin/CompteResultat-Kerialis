@@ -346,6 +346,33 @@ namespace CompteResultat {
         protected global::System.Web.UI.WebControls.GridView gvImport;
         
         /// <summary>
+        /// chkForceCompSubsid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkForceCompSubsid;
+        
+        /// <summary>
+        /// chkExp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkExp;
+        
+        /// <summary>
+        /// chkGroupes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkGroupes;
+        
+        /// <summary>
         /// divLoading control.
         /// </summary>
         /// <remarks>

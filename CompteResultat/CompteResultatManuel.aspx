@@ -31,7 +31,15 @@
             $('.NodeStyle a').unbind('click')
 
             $("#cmdCreateCR").click(function (evt) {
-                $("#divLoading").css("display", "block");
+                if (Page_ClientValidate()) { 
+                    $("#divValSummary").css("display", "block");
+                    $("#divLoading").css("display", "block");
+                }
+                else
+                {
+                    $("#divValSummary").css("display", "none");
+                    $("#divLoading").css("display", "none");
+                }
             });
 
             $("#cmdSelectAll").click(function (evt) {
@@ -180,9 +188,10 @@
     <div>
         <label class="element">Nom du rapport :</label>
         <input id="txtNameReport" class="element" runat="server" />
+        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Le nom du rapport est obligatoire" ControlToValidate="txtNameReport" ForeColor="Red"></asp:RequiredFieldValidator> 
     </div>
     <div>
-         <asp:CheckBox Visible="false" class="element" ID="chkCalcProv" runat="server" Text="Calculer les provisions" Font-Size="Medium" />   
+         <asp:CheckBox Checked="true" Visible="false" class="element" ID="chkCalcProv" runat="server" Text="Calculer les provisions" Font-Size="Medium" />   
     </div>
     <div>
          <asp:CheckBox Visible="false" class="element" ID="chkComptesConsol" runat="server" Text="Comptes de résultats consolidées" Font-Size="Medium" />   
@@ -245,7 +254,9 @@
     <asp:Button CssClass="ButtonBigRed" Visible="false" id="cmdDeleteCR" Text="Supprimer comptes de résultats" runat="server" 
         OnClientClick="return confirm('Est-ce que vous êtes sur de vouloir supprimer ce comptes des résultats ?');" OnClick="cmdDeleteCR_Click" />
     
-    <asp:ValidationSummary Width="300" ForeColor="Red" ID="ValSummary" runat="server" />     
+    <div runat="server" id="divValSummary"  style="display:none" ClientIDMode="Static" >
+        <asp:ValidationSummary Width="300" ForeColor="Red" ID="ValSummary" runat="server" />  
+    </div>
     
     <div runat="server" id="divLoading"  style="display:none" ClientIDMode="Static" >
         <img width="100px" height="100px" style="margin: 20px 50px 10px 100px;" src="Images/ajax-loader.gif" />
