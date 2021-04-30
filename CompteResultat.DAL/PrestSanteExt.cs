@@ -191,8 +191,7 @@ namespace CompteResultat.DAL
                 throw ex;
             }
         }
-
-
+        
         public static List<GroupesGarantiesSante> GetGroupGarantyList()
         {
             try
@@ -214,8 +213,7 @@ namespace CompteResultat.DAL
                 throw ex;
             }
         }
-
-
+        
         public static void DeleteRowsWithImportId(int importId)
         {
             try

@@ -243,6 +243,7 @@
     <Content Include="CompteResultatAutomatique.aspx" />
     <Content Include="CompteResultatManuel.aspx" />
     <Content Include="FileManager.aspx" />
+    <Content Include="GestionExperience.aspx" />
     <Content Include="GestionCadencier.aspx" />
     <Content Include="GestionEntreprises.aspx" />
     <Content Include="GestionGaranties.aspx" />
@@ -384,6 +385,13 @@
     </Compile>
     <Compile Include="FileManager.aspx.designer.cs">
       <DependentUpon>FileManager.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GestionExperience.aspx.cs">
+      <DependentUpon>GestionExperience.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GestionExperience.aspx.designer.cs">
+      <DependentUpon>GestionExperience.aspx</DependentUpon>
     </Compile>
     <Compile Include="GestionCadencier.aspx.cs">
       <DependentUpon>GestionCadencier.aspx</DependentUpon>

@@ -81,6 +81,7 @@
                             <asp:MenuItem Selectable="false"   Text="Paramètrage" >
                                 <asp:MenuItem NavigateUrl="~/MonEntreprise.aspx" Text="Mon Entreprise" />                            
                                 <asp:MenuItem NavigateUrl="~/GestionGaranties.aspx" Text="Groupes et Garanties Santé" />
+                                <asp:MenuItem NavigateUrl="~/GestionExperience.aspx" Text="Experience Santé" />
                                 <asp:MenuItem NavigateUrl="~/GestionCadencier.aspx" Text="Cadenciers Santé" />
                                 <asp:MenuItem NavigateUrl="~/GestionEntreprises.aspx" Text="Paramètres des Entreprises" /> 
                             </asp:MenuItem>  
@@ -105,6 +106,7 @@
                                 <asp:MenuItem NavigateUrl="~/MonEntreprise.aspx" Text="Mon Entreprise" />
                                 <asp:MenuItem NavigateUrl="~/GestionUtilisateurs.aspx" Text="Liste des Utilisateurs" />                            
                                 <asp:MenuItem NavigateUrl="~/GestionGaranties.aspx" Text="Groupes et Garanties Santé" />
+                                <asp:MenuItem NavigateUrl="~/GestionExperience.aspx" Text="Experience Santé" />
                                 <asp:MenuItem NavigateUrl="~/GestionCadencier.aspx" Text="Cadenciers Santé" />
                                 <asp:MenuItem NavigateUrl="~/GestionEntreprises.aspx" Text="Paramètres des Entreprises" />
                             </asp:MenuItem> 

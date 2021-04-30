@@ -1200,34 +1200,51 @@ namespace CompteResultat.BL
             }
         }
 
-        public static void FillAffichageSheet(FileInfo excelFilePath, List<PrestSante> myPrestData)
+        public static void FillAffichageSheet(FileInfo excelFilePath, string assur)
         {
             try
             {
                 //create the table that holds the values for the quartiles
                 DataTable affTable = new DataTable();
+                DataTable affTable2 = new DataTable();
 
-                DataColumn order = new DataColumn("ORDER", typeof(int));
-                DataColumn famille = new DataColumn("FAMILLE", typeof(string));
-                DataColumn acte = new DataColumn("ACTE", typeof(string));
+                //DataColumn order = new DataColumn("ORDER", typeof(int));
+                DataColumn assureur = new DataColumn("ASSUREUR", typeof(string));
+                DataColumn group = new DataColumn("GROUP", typeof(string));
+                DataColumn garanty = new DataColumn("GARANTY", typeof(string));
+                DataColumn assureur2 = new DataColumn("ASSUREUR", typeof(string));
+                DataColumn group2 = new DataColumn("GROUP", typeof(string));
 
-                affTable.Columns.AddRange(new DataColumn[] { order, famille, acte });
-                
-                var uniqueGGList = myPrestData.OrderBy(p => p.GroupName).GroupBy(p => new { p.GroupName, p.GarantyName }).ToList();
+                affTable.Columns.AddRange(new DataColumn[] { assureur, group, garanty });
+                affTable2.Columns.AddRange(new DataColumn[] { assureur2, group2 });
+
+                var uniqueGGList = GroupGarantySante.GetUniqueGroupsAndGarantiesForAssureur(assur);
+                var uniqueAGList = GroupGarantySante.GetUniqueAssureurAndGroups(assur);
 
                 if (uniqueGGList.Any())
                 {
-                    int cnt = 1;
                     foreach (var elem in uniqueGGList)
                     {
                         DataRow newRow = affTable.NewRow();
 
-                        newRow["ORDER"] = cnt;
-                        newRow["FAMILLE"] = elem.First().GroupName;
-                        newRow["ACTE"] = elem.First().GarantyName;
-
+                        newRow["ASSUREUR"] = elem.AssureurName;
+                        newRow["GROUP"] = elem.GroupName;
+                        newRow["GARANTY"] = elem.GarantyName;
+                        
                         affTable.Rows.Add(newRow);
-                        cnt++;
+                    }
+                }
+
+                if (uniqueAGList.Any())
+                {
+                    foreach (var elem in uniqueAGList)
+                    {
+                        DataRow newRow2 = affTable2.NewRow();
+
+                        newRow2["ASSUREUR"] = elem.AssureurName;
+                        newRow2["GROUP"] = elem.GroupName;
+                        
+                        affTable2.Rows.Add(newRow2);
                     }
                 }
 
@@ -1238,6 +1255,7 @@ namespace CompteResultat.BL
 
                     ExcelWorksheet ws = pck.Workbook.Worksheets[C.cEXCELGROUPGARANT];
                     ws.Cells["A2"].LoadFromDataTable(affTable, false);
+                    ws.Cells["E2"].LoadFromDataTable(affTable2, false);
                     pck.Save();
                 }
             }

@@ -594,8 +594,8 @@ namespace CompteResultat.BL
 
                 ExcelSheetHandler.FillQuartileSheet(fiExcelFile, prestaDataNormalizedFirstYear);
 
-                //this is no longer required
-                //ExcelSheetHandler.FillAffichageSheet(fiExcelFile, prestaDataNormalizedFirstYear);
+                //this is no longer required                
+                ExcelSheetHandler.FillAffichageSheet(fiExcelFile, assurList[0]);
 
                 ExcelSheetHandler.FillDates(fiExcelFile, dateArret, debutPeriod, finPeriod, TaxDef, TaxAct, TaxPer, null);
 
