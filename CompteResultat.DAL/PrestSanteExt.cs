@@ -213,7 +213,29 @@ namespace CompteResultat.DAL
                 throw ex;
             }
         }
-        
+
+        public static List<GroupesGarantiesSante> GetExperienceData()
+        {
+            try
+            {
+                List<GroupesGarantiesSante> GroupGarantyTable;
+
+                using (var context = new CompteResultatEntities())
+                {
+                    GroupGarantyTable = context.Database
+                            .SqlQuery<GroupesGarantiesSante>("SELECT DISTINCT AssureurName,GroupName,GarantyName,CodeActe,OrderNumber=1 FROM dbo.PrestSante ORDER BY AssureurName,GroupName,GarantyName,CodeActe")
+                            .ToList<GroupesGarantiesSante>();
+                }
+
+                return GroupGarantyTable;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
+
         public static void DeleteRowsWithImportId(int importId)
         {
             try

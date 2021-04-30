@@ -331,7 +331,7 @@ div.accountInfo
 
 
 .TreeView { border: 1px solid #A9A9A9; color:#3A4F63; text-decoration:none; overflow: scroll;  }   
-.Repeater { border: 1px solid #A9A9A9; color:#3A4F63; text-decoration:none; overflow-y: scroll; height:500px; width:400px; margin-top:15px; padding:10px;   }       
+.Repeater { border: 1px solid #A9A9A9; color:#3A4F63; text-decoration:none; overflow-y: scroll; height:500px; width:700px; margin-top:15px; padding:10px;   }       
 .NodeStyle a{color: #3A4F63;}
 
 table th {padding-right:10px;}

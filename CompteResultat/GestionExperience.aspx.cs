@@ -28,9 +28,7 @@ namespace CompteResultat
 
                 if (!IsPostBack)
                 {
-                    lbAssur.SelectedIndex = 0;
                     rptExp.DataBind();
-                    //UpdateTreeView(C.cDEFAULTASSUREUR);
                 }
                 else
                 {
@@ -48,9 +46,7 @@ namespace CompteResultat
                             string excelDirectory = Path.Combine(Request.PhysicalApplicationPath, C.excelFolder);
                             string fullUploadPath = Path.Combine(excelDirectory, excelFile);
                             uploadExcel.PostedFile.SaveAs(fullUploadPath);
-
-                            //string compId = lbCompanies.SelectedItem.Value.ToString();
-                            //int iCompId = -1;
+                            
                             string assurId = lbAssur.SelectedItem.Value.ToString();
                             string assurName = lbAssur.SelectedItem.Text.ToString();
                             int iAssurId = -1;
@@ -58,8 +54,9 @@ namespace CompteResultat
                             if (int.TryParse(assurId, out iAssurId))
                             {
                                 if (iAssurId == -1)
-                                    assurName = C.cDEFAULTASSUREUR;
-                                BLCadencier.ImportCadencierForAssureur(assurName, fullUploadPath, true);
+                                    return;
+
+                                BLExperience.ImportExperienceForAssureur(assurName, fullUploadPath, true);
 
                                 //refresh the tree
                                 lbAssur.DataBind();
@@ -68,7 +65,6 @@ namespace CompteResultat
                                 {
                                     SelectItem(assurName);
                                     rptExp.DataBind();
-                                    //UpdateTreeView(assurName);
                                 }
                                 else
                                 {
@@ -76,17 +72,10 @@ namespace CompteResultat
                                     {
                                         SelectItem(lbAssur.Items[0].Text);
                                         rptExp.DataBind();
-                                        //UpdateTreeView(lbAssur.Items[0].Text);
                                     }
                                     else
                                         rptExp.DataBind();
-                                    //    tvGaranties.Nodes.Clear();
                                 }
-
-
-                                //lbAssur.DataBind();
-                                //string selAssur = Session["SelectedAssureurName"].ToString();
-                                //SelectItem(selAssur);
                             }
                         }
                     }
@@ -102,30 +91,24 @@ namespace CompteResultat
             try
             {
                 if (lbAssur.SelectedItem != null)
+                {
                     assurName = lbAssur.SelectedItem.Text.ToString();
-                else
-                    assurName = C.cDEFAULTASSUREUR;
-
-                return C_TempExpData.GetExpData(2018);
+                    //###
+                    return C_TempExpData.GetExpDataForAssureur(assurName);
+                }
+                
+                return null;                
             }
             catch (Exception ex) { UICommon.HandlePageError(ex, this.Page, "GestionExperience::GetExperience"); return null; }
         }
 
-        public List<Assureur> GetAssureurs([Control] bool chkAssur)
+        public List<Assureur> GetAssureurs()
         {
             try
             {
                 List<Assureur> assur;
 
-                if (chkAssur)
-                {
-                    assur = Assureur.GetAssureursWithoutCadencier();
-                }
-                else
-                {
-                    assur = Assureur.GetAllAssureurs();
-                    assur.Insert(0, new Assureur { Id = -1, Name = C.cDEFAULTASSUREUR });
-                }
+                assur = Assureur.GetAllAssureurs();                    
 
                 return assur;
             }
@@ -164,11 +147,11 @@ namespace CompteResultat
             {
                 string assurName = lbAssur.SelectedItem.Text.ToString();
 
-                List<Cadencier> groupsSante = Cadencier.GetCadencierForAssureur(assurName); 
-                ExcelPackage pack = BLCadencier.ExportCadencierForAssureur(assurName);
+                //List<C_TempExpData> groupsSante = C_TempExpData.GetExpData(assurName); 
+                ExcelPackage pack = BLExperience.ExportExperienceForAssureur(assurName);
 
                 uploadPath = Path.Combine(Request.PhysicalApplicationPath, C.uploadFolder);
-                uploadPath = Path.Combine(uploadPath, User.Identity.Name + "_" + assurName + "_Cadencier.xlsx");
+                uploadPath = Path.Combine(uploadPath, User.Identity.Name + "_" + assurName + "_Experience.xlsx");
 
                 pack.SaveAs(new FileInfo(uploadPath));
 
@@ -196,9 +179,9 @@ namespace CompteResultat
                 Session["SelectedAssureurIndex"] = lbAssur.SelectedIndex;
 
                 if (!string.IsNullOrWhiteSpace(assurName))
-                    Cadencier.DeleteCadencierWithSpecificAssureurName(assurName);
+                    C_TempExpData.DeleteExperienceWithSpecificAssureurName(assurName);
                 else
-                    throw new Exception("Please select the name of the 'Assureur' for which you want to delete the Cadencier!");
+                    throw new Exception("Please select the name of the 'Assureur' for which you want to delete the Experience!");
 
                 //refresh the tree
                 lbAssur.DataBind();
@@ -207,7 +190,6 @@ namespace CompteResultat
                 {
                     SelectItem(assurName);
                     rptExp.DataBind();
-                    //UpdateTreeView(assurName);
                 }
                 else
                 {
@@ -215,14 +197,29 @@ namespace CompteResultat
                     {
                         SelectItem(lbAssur.Items[0].Text);
                         rptExp.DataBind();
-                        //UpdateTreeView(lbAssur.Items[0].Text);
                     }
                     else
-                        //tvGaranties.Nodes.Clear();
                         rptExp.DataBind();
                 }
             }
             catch (Exception ex) { UICommon.HandlePageError(ex, this.Page, "GestionExperience::cmdDelete_Click"); }
+        }
+
+        protected void cmdRecreate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                BLGroupsAndGaranties.RecreateGroupsGarantiesSanteFromPresta();
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+
+                var myCustomValidator = new CustomValidator();
+                myCustomValidator.IsValid = false;
+                myCustomValidator.ErrorMessage = ex.Message;
+                Page.Validators.Add(myCustomValidator);
+            }
         }
 
         protected void lbAssur_DataBound(object sender, EventArgs e)
@@ -233,9 +230,7 @@ namespace CompteResultat
                 if (lbAssur.SelectedIndex == -1 && lbAssur.Items.Count > 0)
                 {
                     SelectItem(lbAssur.Items[0].Text);
-                    rptExp.DataBind();                    
-                    
-                    //UpdateTreeView(lbAssur.Items[0].Text);
+                    rptExp.DataBind();
                 }
 
                 EnableDisableButtons();
@@ -351,22 +346,6 @@ namespace CompteResultat
 
 
         #endregion
-
-        protected void cmdRecreate_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                BLGroupsAndGaranties.RecreateGroupsGarantiesSanteFromPresta();
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex.Message);
-
-                var myCustomValidator = new CustomValidator();
-                myCustomValidator.IsValid = false;
-                myCustomValidator.ErrorMessage = ex.Message;
-                Page.Validators.Add(myCustomValidator);
-            }
-        }
+        
     }
 }

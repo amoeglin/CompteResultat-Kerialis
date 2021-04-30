@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BLExperience.cs" />
     <Compile Include="BLCompany.cs" />
     <Compile Include="BLCadencier.cs" />
     <Compile Include="BLCompteResultat.cs" />

@@ -18,7 +18,6 @@ namespace CompteResultat.DAL
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-
         public static List<C_TempExpData> GetExpData(int year)
         {
             try
@@ -28,6 +27,26 @@ namespace CompteResultat.DAL
                 using (var context = new CompteResultatEntities())
                 {
                     expData = context.C_TempExpData.Where(e => e.AnneeExp == year).ToList();
+                }
+
+                return expData;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
+
+        public static List<C_TempExpData> GetExpDataForAssureur(string assurName)
+        {
+            try
+            {
+                List<C_TempExpData> expData;
+
+                using (var context = new CompteResultatEntities())
+                {
+                    expData = context.C_TempExpData.Where(e => e.AssureurName == assurName).ToList();
                 }
 
                 return expData;
@@ -56,8 +75,57 @@ namespace CompteResultat.DAL
             }
         }
 
+        public static void DeleteExperienceWithSpecificAssureurName(string assurName)
+        {
+            try
+            {
+                using (var context = new CompteResultatEntities())
+                {
+                    context.C_TempExpData.RemoveRange(context.C_TempExpData.Where(c => c.AssureurName == assurName));
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
 
+        public static void TruncateTable()
+        {
+            try
+            {
+                using (var context = new CompteResultatEntities())
+                {
+                    context.Database.ExecuteSqlCommand("TRUNCATE TABLE _TempExpData;");
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
 
+        public static int InsertExp(C_TempExpData exp)
+        {
+            try
+            {
+                using (var context = new CompteResultatEntities())
+                {
+                    context.C_TempExpData.Add(exp);
+                    context.SaveChanges();
+
+                    return exp.Id;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
 
         //MetaData definition for basic validation
         public class MetaData

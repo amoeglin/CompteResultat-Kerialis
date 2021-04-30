@@ -33,5 +33,6 @@ namespace CompteResultat.DAL
         public Nullable<double> MinNous { get; set; }
         public Nullable<double> MaxNous { get; set; }
         public Nullable<int> ImportId { get; set; }
+        public string AssureurName { get; set; }
     }
 }

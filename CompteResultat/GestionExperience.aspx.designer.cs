@@ -22,15 +22,6 @@ namespace CompteResultat {
         protected global::System.Web.UI.WebControls.Literal Literal9;
         
         /// <summary>
-        /// chkAssur control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkAssur;
-        
-        /// <summary>
         /// lbAssur control.
         /// </summary>
         /// <remarks>

@@ -13,6 +13,7 @@ warning 6002: The table/view 'CompteResultat.dbo._TempExpData' does not have a p
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ImportId" Type="int" />
+          <Property Name="AssureurName" Type="nvarchar" MaxLength="100" />
           <Property Name="Au" Type="date" />
           <Property Name="Contrat" Type="nvarchar" MaxLength="100" />
           <Property Name="CodCol" Type="nvarchar" MaxLength="100" />
@@ -343,6 +344,7 @@ warning 6002: The table/view 'CompteResultat.dbo.IMReAssAss' does not have a pri
           <Property Name="WithOption" Type="nvarchar" MaxLength="10" />
           <Property Name="BO1" Type="nvarchar" MaxLength="50" />
           <Property Name="BO2" Type="nvarchar" MaxLength="50" />
+          <Property Name="Test" Type="int" />
         </EntityType>
         <EntityType Name="ReAssureur">
           <Key>
@@ -640,6 +642,7 @@ warning 6002: The table/view 'CompteResultat.dbo.IMReAssAss' does not have a pri
             <DefiningQuery>SELECT 
     [_TempExpData].[Id] AS [Id], 
     [_TempExpData].[ImportId] AS [ImportId], 
+    [_TempExpData].[AssureurName] AS [AssureurName], 
     [_TempExpData].[Au] AS [Au], 
     [_TempExpData].[Contrat] AS [Contrat], 
     [_TempExpData].[CodCol] AS [CodCol], 
@@ -944,6 +947,7 @@ warning 6002: The table/view 'CompteResultat.dbo.IMReAssAss' does not have a pri
           <Property Name="Beneficiaire" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="BO1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="BO2" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Test" Type="Int32" />
         </EntityType>
         <EntityType Name="ReAssureur">
           <Key>
@@ -1321,6 +1325,7 @@ warning 6002: The table/view 'CompteResultat.dbo.IMReAssAss' does not have a pri
           <Property Name="MinNous" Type="Double" />
           <Property Name="MaxNous" Type="Double" />
           <Property Name="ImportId" Type="Int32" />
+          <Property Name="AssureurName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -1512,6 +1517,7 @@ warning 6002: The table/view 'CompteResultat.dbo.IMReAssAss' does not have a pri
           <EntitySetMapping Name="PrestSantes">
             <EntityTypeMapping TypeName="CompteResultatModel.PrestSante">
               <MappingFragment StoreEntitySet="PrestSante">
+                <ScalarProperty Name="Test" ColumnName="Test" />
                 <ScalarProperty Name="BO2" ColumnName="BO2" />
                 <ScalarProperty Name="BO1" ColumnName="BO1" />
                 <ScalarProperty Name="Beneficiaire" ColumnName="Beneficiaire" />
@@ -1770,6 +1776,7 @@ warning 6002: The table/view 'CompteResultat.dbo.IMReAssAss' does not have a pri
           <EntitySetMapping Name="C_TempExpData">
             <EntityTypeMapping TypeName="CompteResultatModel.C_TempExpData">
               <MappingFragment StoreEntitySet="_TempExpData">
+                <ScalarProperty Name="AssureurName" ColumnName="AssureurName" />
                 <ScalarProperty Name="ImportId" ColumnName="ImportId" />
                 <ScalarProperty Name="MaxNous" ColumnName="MaxNous" />
                 <ScalarProperty Name="MinNous" ColumnName="MinNous" />

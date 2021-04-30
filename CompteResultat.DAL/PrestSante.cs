@@ -39,5 +39,6 @@ namespace CompteResultat.DAL
         public string Beneficiaire { get; set; }
         public string BO1 { get; set; }
         public string BO2 { get; set; }
+        public Nullable<int> Test { get; set; }
     }
 }
