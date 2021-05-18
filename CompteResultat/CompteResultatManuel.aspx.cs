@@ -29,7 +29,7 @@ namespace CompteResultat
         protected void Page_Load(object sender, EventArgs e)
         {              
             try
-            {   
+            {                
                 //get date values
                 HttpCookie cookie = Request.Cookies["txtStartPeriode"];
                 string startPeriodeCookieVal = cookie != null ? cookie.Value.Split('=')[1] : "";
@@ -323,6 +323,11 @@ namespace CompteResultat
                 TreeNode selectedNode = e.Node;
 
                 string detail = "Nom : " + tv.Name + Environment.NewLine + Environment.NewLine;
+                int parentCompanyId = tv.Id;
+                Session["SelectedCompteResultatNode"] = tv;
+
+                LoadAllCRNodes(selectedNode, tv, parentCompanyId, assurId, detail);
+                LoadAllSubsidNodes(selectedNode, tv, assurId, detail, true, false);
 
                 if (tv.NodeType == C.eTVNodeTypes.Assureur)
                 {
@@ -659,6 +664,13 @@ namespace CompteResultat
 
         protected void cmdCreateCR_Click(object sender, EventArgs e)
         {
+            //RequiredFieldValidator1.ErrorMessage = "Le nom du rapport est obligatoire !";
+            if(txtNameReport.Value == "")
+            {
+                validateReportName.Visible = true;
+            }
+            else { validateReportName.Visible = false; }
+
             //save dates
             if (txtStartPeriode.Text != "")
             {
@@ -1330,9 +1342,7 @@ namespace CompteResultat
                     //throw new Exception("Vous devriez sélectionner un assureur pour utiliser cette fonction !");
                 }
                 else
-                {
-                    int cnt = 0;
-                    
+                {                    
                     //expand all company nodes
                     foreach (TreeNode nodePC in selectedNode.ChildNodes)
                     {
@@ -1344,15 +1354,24 @@ namespace CompteResultat
                             nodePC.Checked = true;
                             int parentCompanyId = tv.Id;
 
-                            //get all CR nodes and subsid nodes
-                            //LoadAllCRNodes(nodePC, tv, parentCompanyId, assurId, detail);
+                            //get all Subsid nodes and subsid nodes
                             LoadAllSubsidNodes(nodePC, tv, assurId, detail, false, true);
-                        }
 
-                        //cnt++;
-                        //if (cnt >= 1000)
-                        //    break;
-                        //nodePC.ExpandAll();
+                            foreach (TreeNode subsidNode in nodePC.ChildNodes)
+                            {
+                                if (subsidNode.ShowCheckBox != null && subsidNode.ShowCheckBox != false)
+                                {
+                                    subsidNode.Checked = true;
+
+                                    LoadAllContractNodes(subsidNode, tv, assurId, detail, true);
+
+                                    foreach (TreeNode contr in subsidNode.ChildNodes)
+                                    {
+                                        contr.Checked = true;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

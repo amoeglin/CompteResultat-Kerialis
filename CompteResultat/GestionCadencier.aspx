@@ -40,6 +40,10 @@
             <%-- <input type="submit" ID="cmdDelete" name="cmdDelete" class="ButtonBigRed ButtonInline" style="width:90px;" value="Supprimer" runat="server" />  --%>
         </div>
 
+        <div style="margin-top:5px; float:right;">
+            <asp:Button CssClass="ButtonBigBlue ButtonInline" style="margin-right:0px; width:320px;" ID="cmdExtract" runat="server" Text="Extraction Cadencier" ClientIDMode="Static" OnClick="cmdExtract_Click" />  
+        </div>
+
         <div runat="server" id="divLoading"  style="display:none" ClientIDMode="Static" >
             <img width="100px" height="100px" style="margin: 20px 5px 10px 140px;" src="Images/ajax-loader.gif" />
         </div>
@@ -55,7 +59,7 @@
 
         <h1><asp:Literal  ID="Literal1" runat="server">Cadenciers :</asp:Literal> </h1> 
         
-        <div class="Repeater"> 
+        <div class="RepeaterCad"> 
 
         <asp:PlaceHolder ID="phHeader" Visible='false' runat="server">
             <asp:Label ID="lblEmpty" runat="server" Text="Il n'y a pas des données disponibles !"> </asp:Label>   
@@ -64,7 +68,7 @@
         <asp:Repeater ItemType="CompteResultat.DAL.Cadencier" SelectMethod="GetCadencier" ID="rptCad" runat="server" OnItemDataBound="rptCad_ItemDataBound">
             <HeaderTemplate>      
                   <table>
-                      <tr><th>Année</th><th>Début Survenance</th><th>Fin Survenance</th><th>Mois</th><th>Cumul</th></tr>                    
+                      <tr><th>Année</th><th>Début Survenance</th><th>Fin Survenance</th><th>Mois</th><th>Coefficient PSAP</th></tr>                    
             </HeaderTemplate>
             <FooterTemplate>
                 </table>                

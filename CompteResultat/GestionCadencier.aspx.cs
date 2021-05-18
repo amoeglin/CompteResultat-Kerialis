@@ -294,6 +294,34 @@ namespace CompteResultat
             }  
         }
 
+        protected void cmdExtract_Click(object sender, EventArgs e)
+        {
+            // TEST : BLCadencier.RecreateCadencier();
+            string uploadPath = "";
+
+            try
+            {                               
+                ExcelPackage pack = BLCadencier.ExportCadencier();
+
+                uploadPath = Path.Combine(Request.PhysicalApplicationPath, C.uploadFolder);
+                uploadPath = Path.Combine(uploadPath, User.Identity.Name + "_ExportCadencier.xlsx");
+
+                pack.SaveAs(new FileInfo(uploadPath));
+
+                UICommon.DownloadFile(this.Page, uploadPath);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+
+                var myCustomValidator = new CustomValidator();
+                myCustomValidator.IsValid = false;
+                myCustomValidator.ErrorMessage = ex.Message;
+                Page.Validators.Add(myCustomValidator);
+            }
+        }
+
+
 
         #region Private Methods
 

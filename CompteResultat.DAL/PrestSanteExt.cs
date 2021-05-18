@@ -16,6 +16,33 @@ namespace CompteResultat.DAL
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public static List<CumulPresta> CumulPrestaData()
+        {
+            try
+            {
+                List<CumulPresta> prestations = new List<CumulPresta>();
+
+                using (var context = new CompteResultatEntities())
+                {
+                    string sql = @"select AssureurName, year(DateSoins) as AnneeSoins, (year(DatePayment)-year(DateSoins))*12 + month(DatePayment) as MoisReglement, 
+                        sum(RembNous) as SommePresta
+                        from [CompteResultat].[dbo].[PrestSante]
+                        group by AssureurName, year(DateSoins), (year(DatePayment)-year(DateSoins))*12 + month(DatePayment) 
+                        order by year(DateSoins), (year(DatePayment)-year(DateSoins))*12 + month(DatePayment)";
+                    
+                    prestations = context.Database.SqlQuery<CumulPresta>(sql).ToList<CumulPresta>();                   
+                }
+
+                return prestations;
+
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
+
         public static List<ExcelGlobalPrestaData> GetPrestaGlobalEntData(List<int> years, List<string> companyList)
         {
             try
@@ -151,6 +178,27 @@ namespace CompteResultat.DAL
 
                     //cotisat2 = context.CotisatSantes.Where(cot => contrIds.Contains(cot.ContractId)).
                     //    Select(cot => new { cot.DebPrime, cot.FinPrime, cot.ContractId, cot.CodeCol, cot.Year, cot.Cotisation }).ToList();
+                }
+
+                return prestations;
+
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
+
+        public static List<PrestSante> GetPrestations()
+        {
+            try
+            {
+                List<PrestSante> prestations;
+
+                using (var context = new CompteResultatEntities())
+                {
+                    prestations = context.PrestSantes.ToList();
                 }
 
                 return prestations;

@@ -18,7 +18,7 @@ namespace CompteResultat.DAL
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static List<C_TempExpData> GetExpData(int year)
+        public static List<C_TempExpData> GetExpData(int yearStart, int yearEnd)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace CompteResultat.DAL
 
                 using (var context = new CompteResultatEntities())
                 {
-                    expData = context.C_TempExpData.Where(e => e.AnneeExp == year).ToList();
+                    expData = context.C_TempExpData.Where(e => e.AnneeExp >= yearStart && e.AnneeExp <= yearEnd).ToList();
                 }
 
                 return expData;

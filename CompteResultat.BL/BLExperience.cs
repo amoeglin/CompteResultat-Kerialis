@@ -191,18 +191,36 @@ namespace CompteResultat.BL
                 C_TempExpData.TruncateTable();
 
                 //get data from PrestSante
-                List<GroupesGarantiesSante> ExperienceData = PrestSante.GetExperienceData();
+                List<PrestSante> PrestaData = PrestSante.GetPrestations();
 
                 //add data to _TempExpData
-                foreach (GroupesGarantiesSante item in ExperienceData)
-                {
-                    int id = GroupGarantySante.InsertGroupGaranty(new GroupGarantySante
+                List<PrestSante> prestaDataNormalized = BLCompteResultat.NormalizeGroupGarantyLabelsInPrestaTable(PrestaData);
+                List<ExcelPrestaSheet> excelPrestDataLarge = ExcelSheetHandler.GenerateModifiedPrestData(prestaDataNormalized);
+
+                //save data to table: _TempExpData
+                foreach (ExcelPrestaSheet item in excelPrestDataLarge)
+                { 
+                    int id = C_TempExpData.InsertExp(new C_TempExpData
                     {
+                        ImportId = item.ImportId,
                         AssureurName = item.AssureurName,
-                        GroupName = item.GroupName,
-                        GarantyName = item.GarantyName,
-                        CodeActe = item.CodeActe,
-                        OrderNumber = 1
+                        Au = item.DateVision.HasValue ? item.DateVision.Value : DateTime.MinValue,
+                        Contrat = item.ContractId,
+                        CodCol = item.CodeCol,
+                        AnneeExp = item.DateSoins.HasValue ? item.DateSoins.Value.Year : 0,
+                        LibActe = item.GarantyName,
+                        LibFam = item.GroupName,
+                        TypeCas = item.CAS,
+                        NombreActe = item.NombreActe,
+                        Fraisreel = item.FraisReel,
+                        Rembss = item.RembSS,
+                        RembAnnexe = item.RembAnnexe,
+                        RembNous = item.RembNous,
+                        Reseau = item.Reseau,
+                        MinFr = item.MinFR,
+                        MaxFr = item.MaxFR,
+                        MinNous = item.MinNous,
+                        MaxNous = item.MaxNous
                     });
                 }
             }

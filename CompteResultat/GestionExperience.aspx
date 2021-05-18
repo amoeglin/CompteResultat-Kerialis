@@ -10,7 +10,11 @@
         $(document).ready(function () { 
             $("#cmdImport").click(function (evt) {
                 $("#divLoading").css("display", "block");
-            });  
+            }); 
+
+            $("#cmdRecreate").click(function (evt) {
+                $("#divLoading").css("display", "block");
+            });
         }); 
      
    </script>
@@ -62,7 +66,7 @@
 
         <h1><asp:Literal  ID="Literal1" runat="server">Experience :</asp:Literal> </h1> 
         
-        <div class="Repeater"> 
+        <div class="RepeaterExp"> 
 
         <asp:PlaceHolder ID="phHeader" Visible='false' runat="server">
             <asp:Label ID="lblEmpty" runat="server" Text="Il n'y a pas des données disponibles !"> </asp:Label>   

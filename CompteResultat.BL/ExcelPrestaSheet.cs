@@ -9,7 +9,11 @@ namespace CompteResultat.BL
     public class ExcelPrestaSheet
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        
+
+        public int ImportId { get; set; }
+        public string AssureurName { get; set; }
+        public int AnneeExp { get; set; }
+
         public DateTime? DateVision { get; set; }
         public string ContractId { get; set; }
         public string CodeCol { get; set; }

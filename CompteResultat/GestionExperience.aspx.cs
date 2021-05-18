@@ -209,7 +209,8 @@ namespace CompteResultat
         {
             try
             {
-                BLGroupsAndGaranties.RecreateGroupsGarantiesSanteFromPresta();
+                //BLGroupsAndGaranties.RecreateGroupsGarantiesSanteFromPresta();
+                BLExperience.RecreateExperienceFromPresta();
             }
             catch (Exception ex)
             {

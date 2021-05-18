@@ -54,6 +54,7 @@ namespace CompteResultat.BL
         public bool ForceCompanySubsid { get; set; }
         public bool UpdateGroupes { get; set; }
         public bool UpdateExperience { get; set; }
+        public bool UpdateCad { get; set; }
 
         #endregion
 
@@ -64,7 +65,7 @@ namespace CompteResultat.BL
             string tableForOtherFields, string importName, string csvSep, string uploadPath, 
             string uploadPathPrest, string uploadPathCot, string uploadPathDemo, string uploadPathCotPrev, string uploadPathSinistrPrev, 
             string uploadPathDecompPrev, string newExpCSV, string configStringExp, string uploadPathExp, 
-            bool forceCompanySubsid, bool updateGroupes, bool updateExperience)
+            bool forceCompanySubsid, bool updateGroupes, bool updateExperience, bool updateCad)
         {
             CSVSep = csvSep;
             ImportName = importName;
@@ -97,6 +98,7 @@ namespace CompteResultat.BL
             ForceCompanySubsid = forceCompanySubsid;
             UpdateExperience = updateExperience;
             UpdateGroupes = updateGroupes;
+            UpdateCad = updateCad;
         }
 
         public BLImport(int importId)
@@ -131,7 +133,7 @@ namespace CompteResultat.BL
                 
                 if (File.Exists(UploadPathPrest))
                 {
-                    TransformFile(UploadPathPrest, CSVSep, ConfigStringPrest, NewPrestCSV, "Id", importId, ForceCompanySubsid);
+                    TransformFile(UploadPathPrest, CSVSep, ConfigStringPrest, NewPrestCSV, "Id", importId, C.eImportFile.PrestaSante, ForceCompanySubsid);
                     Thread.Sleep(500);
                     if (File.Exists(NewPrestCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewPrestCSV, ImportId);
@@ -139,7 +141,7 @@ namespace CompteResultat.BL
 
                 if (File.Exists(UploadPathCot))
                 {
-                    TransformFile(UploadPathCot, CSVSep, ConfigStringCot, NewCotCSV, "Id", importId, ForceCompanySubsid);
+                    TransformFile(UploadPathCot, CSVSep, ConfigStringCot, NewCotCSV, "Id", importId, C.eImportFile.CotisatSante, ForceCompanySubsid);
                     Thread.Sleep(500);
                     if (File.Exists(NewCotCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewCotCSV, ImportId);
@@ -147,7 +149,7 @@ namespace CompteResultat.BL
 
                 if (File.Exists(UploadPathDemo))
                 {
-                    TransformFile(UploadPathDemo, CSVSep, ConfigStringDemo, NewDemoCSV, "Id", importId, ForceCompanySubsid);
+                    TransformFile(UploadPathDemo, CSVSep, ConfigStringDemo, NewDemoCSV, "Id", importId, C.eImportFile.Demography, ForceCompanySubsid);
                     Thread.Sleep(500);
                     if (File.Exists(NewDemoCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewDemoCSV, ImportId);
@@ -155,7 +157,7 @@ namespace CompteResultat.BL
 
                 if (File.Exists(UploadPathCotPrev))
                 {
-                    TransformFile(UploadPathCotPrev, CSVSep, ConfigStringCotPrev, NewCotPrevCSV, "Id", importId);
+                    TransformFile(UploadPathCotPrev, CSVSep, ConfigStringCotPrev, NewCotPrevCSV, "Id", importId, C.eImportFile.CotisatPrev);
                     Thread.Sleep(500);
                     if (File.Exists(NewCotPrevCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewCotPrevCSV, ImportId);
@@ -163,7 +165,7 @@ namespace CompteResultat.BL
 
                 if (File.Exists(UploadPathSinistrPrev))
                 {
-                    TransformFile(UploadPathSinistrPrev, CSVSep, ConfigStringSinistrPrev, NewSinistrePrevCSV, "Id", importId);
+                    TransformFile(UploadPathSinistrPrev, CSVSep, ConfigStringSinistrPrev, NewSinistrePrevCSV, "Id", importId, C.eImportFile.SinistrePrev);
                     Thread.Sleep(500);
                     if (File.Exists(NewSinistrePrevCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewSinistrePrevCSV, ImportId);
@@ -171,7 +173,7 @@ namespace CompteResultat.BL
 
                 if (File.Exists(UploadPathDecompPrev))
                 {
-                    TransformFile(UploadPathDecompPrev, CSVSep, ConfigStringDecompPrev, NewDecompPrevCSV, "Id", importId);
+                    TransformFile(UploadPathDecompPrev, CSVSep, ConfigStringDecompPrev, NewDecompPrevCSV, "Id", importId, C.eImportFile.DecompPrev);
                     Thread.Sleep(500);
                     if (File.Exists(NewDecompPrevCSV))
                         G.GetAssurContrCompSubsidFromCSV(ref dataAssurContrCompSubsid, NewDecompPrevCSV, ImportId);
@@ -565,6 +567,12 @@ namespace CompteResultat.BL
                 if(UpdateGroupes)
                     BLGroupsAndGaranties.RecreateGroupsGarantiesSanteFromPresta();
 
+                if (UpdateExperience)
+                    BLExperience.RecreateExperienceFromPresta();
+
+                if (UpdateCad)
+                    BLCadencier.RecreateCadencier();
+
                 //everything went well, we delete the corresponding data from the Temp Table
                 C_TempOtherFields.DeleteRowsWithImportId(ImportId);
 
@@ -743,7 +751,7 @@ namespace CompteResultat.BL
         }
 
         public static void TransformFile(string inputFile, string csvSep, string configString,
-            string saveLocation, string leadingIdField = "", int importId = 0, bool forceCompanySubsid = false)
+            string saveLocation, string leadingIdField = "", int importId = 0, C.eImportFile impFile= C.eImportFile.PrestaSante, bool forceCompanySubsid = false)
         {
             try
             {
@@ -866,14 +874,31 @@ namespace CompteResultat.BL
                             if (entry.Value == C.cEMPTYVAL)
                                 newLine += ";";
                             else
-                            { 
+                            {
+                                string myValue = "";
                                 //### if checkbox "Contrat sans entreprise et filiale" selected:
-                                if(forceCompanySubsid && (entry.Key == 2 || entry.Key == 3))
+                                if (forceCompanySubsid && (entry.Key == 2 || entry.Key == 3))
                                 {
-                                    newLine += cols[1].Trim() + C.cVALSEP;
+                                    //newLine += cols[1].Trim() + C.cVALSEP;
+                                    myValue = cols[1].Trim();
                                 }
                                 else
-                                    newLine += cols[entry.Value].Trim() + C.cVALSEP;
+                                {
+                                    //newLine += cols[entry.Value].Trim() + C.cVALSEP;
+                                    myValue = cols[entry.Value].Trim();
+                                }
+
+                                if(entry.Key == 0 || entry.Key == 1 || entry.Key == 2 || entry.Key == 3)
+                                {
+                                    myValue = myValue.ToUpper();
+                                }
+
+                                if(impFile == C.eImportFile.PrestaSante && (entry.Key == 8 || entry.Key == 9))
+                                {
+                                    myValue = myValue.ToUpper();
+                                }
+
+                                newLine += myValue + C.cVALSEP;
 
                             }
                         }

@@ -124,6 +124,272 @@ namespace CompteResultat.BL
             }
         }
 
+        public static void RecreateCadencier()
+        {
+            try
+            {                
+                List<double?> lstSommePresta = new List<double?>();
+                double? res = 0;
+                double? cumulTotal = 0;
+                double? sommePresta = 0;
+                double? coeffPSAP = 0;
+                string assName = "";
+
+                //get Presta
+                List<CumulPresta> presta = PrestSante.CumulPrestaData();
+                List<int> years = presta.GroupBy(p => new { p.AnneeSoins })
+                    .Select(g => g.Key.AnneeSoins)
+                    .ToList();
+
+                if (presta.Any())
+                    assName = presta.First().AssureurName;
+
+                //get last year
+                int maxYear = years.Max();
+                
+                List<double> yearsCumul = new List<double>(years.Count);
+                foreach (int year in years)
+                {
+                    yearsCumul.Add(0);
+                }
+
+                //delete Cad for specific year
+                Cadencier.DeleteCadencierForSpecificYear(maxYear);
+
+                //re-create Cad for that year
+                int maxMonth = presta.Max(p => p.MoisReglement);
+
+                for (int i = 1; i <= maxMonth; i++)
+                {
+                    sommePresta = 0;
+                    int yearCount = 0;
+                    foreach (int year in years)
+                    {
+                        res = presta.Where(p => p.AnneeSoins == year && p.MoisReglement == i).Select(p => p.SommePresta).SingleOrDefault().HasValue ?
+                            presta.Where(p => p.AnneeSoins == year && p.MoisReglement == i).Select(p => p.SommePresta).SingleOrDefault() : 0;
+                        
+                        sommePresta += res.HasValue ? res.Value : 0;
+
+                        yearsCumul[yearCount] += res.HasValue ? res.Value : 0;
+
+                        yearCount++;
+                    }
+
+                    lstSommePresta.Add(sommePresta.HasValue ? sommePresta.Value : 0);
+                }
+
+                //calculate CumulTotal => somme des prestations 
+                foreach (double annualTotal in yearsCumul)
+                {                    
+                    cumulTotal += annualTotal;                    
+                }
+
+                //complete missing columns                
+                double? cumPresta = 0;
+                int month = 1;
+                foreach (double sumPresta in lstSommePresta)
+                {
+                    //presta moyenne %
+                    if (cumulTotal != 0)
+                    {                        
+                        //presta cumulées %
+                        cumPresta += sumPresta * 100 / cumulTotal;
+                    }
+                    
+                    //Coeff PSAP %
+                    if (cumPresta != 0)
+                    {
+                        coeffPSAP = (100 - cumPresta) / cumPresta;
+                    }
+                    else
+                    {
+                        coeffPSAP = 0;
+                    }
+
+                    int id = Cadencier.InsertCadencier(new Cadencier
+                    {
+                        AssureurName = assName,
+                        Year = maxYear,
+                        DebutSurvenance = new DateTime(maxYear, 1, 1),
+                        FinSurvenance = new DateTime(maxYear, 12, 31),
+                        Month = month,
+                        Cumul = Math.Round(coeffPSAP.Value, 4) 
+                    });
+
+                    month++;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
+
+        public static ExcelPackage ExportCadencier()
+        {
+            try
+            {
+                int colCounter = 2;
+                double cumulTotal = 0;
+                double? sommePresta = 0;
+                double? res = 0;
+                List<CumulPresta> presta = PrestSante.CumulPrestaData();
+
+                List<int> years = presta.GroupBy(p => new { p.AnneeSoins })
+                    .Select(g => g.Key.AnneeSoins)
+                    .ToList();
+
+                List<double> yearsCumul = new List<double>(years.Count);
+                foreach (int year in years)
+                {
+                    yearsCumul.Add(0);
+                }
+
+                int maxMonth = presta.Max(p => p.MoisReglement);
+
+                List<double> lstSommePresta = new List<double>();
+
+                ExcelPackage pck = new ExcelPackage();
+                var ws = pck.Workbook.Worksheets.Add("PRESTATIONS");
+
+                //write the header 
+                ws.Cells[1, 1].Value = "Mois de règlement";
+                foreach (int year in years)
+                {
+                    ws.Cells[1, colCounter].Value = year.ToString();
+                    colCounter++;
+                }
+                ws.Cells[1, colCounter++].Value = "Somme des prestations";
+
+                ws.Column(colCounter).Style.Numberformat.Format = "#0\\.00%";
+                ws.Cells[1, colCounter++].Value = "Prestations moyenne";
+
+                ws.Column(colCounter).Style.Numberformat.Format = "#0\\.00%";
+                ws.Cells[1, colCounter++].Value = "Prestations cumulées";
+
+                ws.Column(colCounter).Style.Numberformat.Format = "#0\\.00%";
+                ws.Cells[1, colCounter++].Value = "Taux PSAP";
+
+                ws.Cells[1, colCounter++].Value = "Coefficient PSAP";
+
+                int row = 2;
+
+                for(int i=1; i<=maxMonth; i++)
+                {
+                    colCounter = 2;
+                    sommePresta = 0;
+
+                    ws.Cells[row, 1].Value = i.ToString();
+                    int yearCount = 0;
+                    foreach (int year in years)
+                    {
+                        res = presta.Where(p => p.AnneeSoins == year && p.MoisReglement == i).Select(p => p.SommePresta).SingleOrDefault().HasValue ?
+                            presta.Where(p => p.AnneeSoins == year && p.MoisReglement == i).Select(p => p.SommePresta).SingleOrDefault() : 0;
+
+                        ws.Cells[row, colCounter].Value = res;
+                        sommePresta += res;
+
+                        yearsCumul[yearCount] += res.HasValue ? res.Value : 0;
+
+                        yearCount++;
+                        colCounter++;
+                    }
+
+                    //Somme Presta
+                    ws.Cells[row, colCounter++].Value = sommePresta;
+                    lstSommePresta.Add(sommePresta.HasValue ? sommePresta.Value : 0);
+
+                    row++;
+                }
+
+                //calculate CumulTotal => somme des prestations && write the last line => cumul
+                colCounter = 2;
+                foreach (double annualTotal in yearsCumul)
+                {
+                    ws.Cells[row, colCounter].Value = annualTotal;
+
+                    cumulTotal += annualTotal;
+                    colCounter++;
+                }
+
+                ws.Cells[row, colCounter++].Value = cumulTotal;
+                ws.Cells[row, colCounter].Value = 100;
+
+                //complete missing columns
+                row = 2;
+                double cumPresta = 0;
+                foreach (double sumPresta in lstSommePresta)
+                {
+                    //presta moyenne %
+                    if (cumulTotal != 0)
+                    {
+                        ws.Cells[row, colCounter].Value = sumPresta * 100 / cumulTotal;
+                        //presta cumulées %
+                        cumPresta += sumPresta * 100 / cumulTotal;
+                        ws.Cells[row, colCounter + 1].Value = cumPresta;
+                    } else
+                    {
+                        ws.Cells[row, colCounter].Value = 0;
+                        ws.Cells[row, colCounter + 1].Value = 0;
+                    }                    
+
+                    //Taux PSAP %
+                    ws.Cells[row, colCounter + 2].Value = 100-cumPresta;
+
+                    //Coeff PSAP %
+                    if (cumPresta != 0) {
+                        ws.Cells[row, colCounter + 3].Value = (100 - cumPresta) / cumPresta;
+                    } else
+                    {
+                        ws.Cells[row, colCounter + 3].Value = 0;
+                    }
+
+                    row++;
+                }                
+
+                //Format table => first line bold
+                ws.Row(1).Style.Font.Bold = true;
+                ws.Row(1).Style.Font.Size = 12;
+
+                //last column green
+                for (int i = 1; i <= maxMonth + 1; i++)
+                {
+                    ws.Cells[i, colCounter + 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells[i, colCounter + 3].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Green);
+                    ws.Cells[i, colCounter + 3].Style.Numberformat.Format = "0.0000";
+                }
+
+                //years in header, background yellow
+                for (int i = 2; i <= years.Count+1; i++)
+                {
+                    ws.Cells[1, i].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells[1, i].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
+
+                    ws.Cells[maxMonth + 2, i].Style.Numberformat.Format = "0";
+                }
+                ws.Cells[maxMonth + 2, years.Count + 2].Style.Numberformat.Format = "0";
+
+                //last line (totals): bold
+                ws.Cells[maxMonth + 2, 1].Value = "Cumul";
+                ws.Row(maxMonth + 2).Style.Font.Bold = true;
+                ws.Row(maxMonth + 2).Style.Font.Size = 12;
+
+                //autofit column width
+                for (int i = 1; i <= colCounter + 3; i++)
+                {
+                    ws.Column(i).AutoFit();
+                }
+
+
+                return pck;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
 
     }
 }

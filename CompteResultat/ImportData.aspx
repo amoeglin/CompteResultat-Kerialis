@@ -241,6 +241,12 @@
                     <asp:CheckBox Checked="true" ID="chkGroupes" runat="server" Text=" METTRE A JOUR les GROUPES et GARANTIES SANTE " Font-Size="Small" />              
                 </td>                      
             </tr>
+            <tr >
+                <td >
+                <td style="">
+                    <asp:CheckBox Checked="true" ID="chkCad" runat="server" Text=" METTRE A JOUR le Cadencier " Font-Size="Small" />              
+                </td>                      
+            </tr>
         </table>
     </div>
 

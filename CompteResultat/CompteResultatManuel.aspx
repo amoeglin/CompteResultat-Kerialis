@@ -188,7 +188,9 @@
     <div>
         <label class="element">Nom du rapport :</label>
         <input id="txtNameReport" class="element" runat="server" />
-        <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="Le nom du rapport est obligatoire" ControlToValidate="txtNameReport" ForeColor="Red"></asp:RequiredFieldValidator> 
+        <asp:Label runat="server" id="validateReportName" Visible="false" ForeColor="Red">Le nom du rapport est obligatoire !</asp:Label>
+        <%--<asp:RequiredFieldValidator ID="RequiredFieldValidator1" ValidationGroup="ReportSubmissionGroup" runat="server" ErrorMessage="" 
+            ControlToValidate="txtNameReport" ForeColor="Red"></asp:RequiredFieldValidator> --%>
     </div>
     <div>
          <asp:CheckBox Checked="true" Visible="false" class="element" ID="chkCalcProv" runat="server" Text="Calculer les provisions" Font-Size="Medium" />   
@@ -199,20 +201,22 @@
 
 
     <%-- Taxes & Taux --%>
-    <asp:PlaceHolder ID="taxControls" runat="server">
-        <div>
-            <label id="lblTaxDef" class="element">Taxe par défaut :</label>
-            <input id="taxDef" class="element" runat="server" />
-        </div>
-        <div>
-            <label id="lblTaxAct" class="element">Taux actifs :</label>
-            <input id="taxAct" class="element" runat="server" />
-        </div>
-        <div>
-            <label id="lblTaxPer" class="element">Taux périphériques :</label>
-            <input id="taxPer" class="element" runat="server" />
-        </div>        
-    </asp:PlaceHolder>
+    <div runat="server" id="div1"  style="display:none" ClientIDMode="Static" >
+        <asp:PlaceHolder ID="taxControls" runat="server" >
+            <div>
+                <label id="lblTaxDef" class="element">Taxe par défaut :</label>
+                <input id="taxDef" class="element" runat="server" />
+            </div>
+            <div>
+                <label id="lblTaxAct" class="element">Taux actifs :</label>
+                <input id="taxAct" class="element" runat="server" />
+            </div>
+            <div>
+                <label id="lblTaxPer" class="element">Taux périphériques :</label>
+                <input id="taxPer" class="element" runat="server" />
+            </div>        
+        </asp:PlaceHolder>
+    </div> 
 
     <br />  
     

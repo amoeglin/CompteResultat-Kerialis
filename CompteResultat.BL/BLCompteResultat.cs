@@ -517,7 +517,7 @@ namespace CompteResultat.BL
                 //*************************** START EXPERIENCE DATA******************************************
 
                 //### //this is a temporary solution => get data from table _TempExpData and send them to excel
-                ExcelSheetHandler.FillExperienceSheet2(fiExcelFile, debutPeriod);
+                ExcelSheetHandler.FillExperienceSheet2(fiExcelFile, debutPeriod, finPeriod);
 
 
                 #region OLD EXPERIENCE DATA
@@ -747,7 +747,7 @@ namespace CompteResultat.BL
 
         }
 
-        private List<PrestSante> NormalizeGroupGarantyLabelsInPrestaTable(List<PrestSante> myPrestData)
+        public static List<PrestSante> NormalizeGroupGarantyLabelsInPrestaTable(List<PrestSante> myPrestData)
         {
             try
             {

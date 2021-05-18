@@ -121,13 +121,13 @@ namespace CompteResultat {
         protected global::System.Web.UI.HtmlControls.HtmlInputText txtNameReport;
         
         /// <summary>
-        /// RequiredFieldValidator1 control.
+        /// validateReportName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator1;
+        protected global::System.Web.UI.WebControls.Label validateReportName;
         
         /// <summary>
         /// chkCalcProv control.
@@ -146,6 +146,15 @@ namespace CompteResultat {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkComptesConsol;
+        
+        /// <summary>
+        /// div1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl div1;
         
         /// <summary>
         /// taxControls control.

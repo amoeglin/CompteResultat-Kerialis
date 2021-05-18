@@ -76,6 +76,23 @@ namespace CompteResultat.DAL
             }
         }
 
+        public static void DeleteCadencierForSpecificYear(int year)
+        {
+            try
+            {
+                using (var context = new CompteResultatEntities())
+                {
+                    context.Cadenciers.RemoveRange(context.Cadenciers.Where(c => c.Year == year));
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                throw ex;
+            }
+        }
+
         public static int InsertCadencier(Cadencier cad)
         {
             try

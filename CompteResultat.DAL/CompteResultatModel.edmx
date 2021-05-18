@@ -5,8 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="CompteResultatModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'CompteResultat.dbo._TempExpData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="_TempExpData">
           <Key>
             <PropertyRef Name="Id" />
@@ -610,6 +608,7 @@ warning 6002: The table/view 'CompteResultat.dbo.IMReAssAss' does not have a pri
           <Parameter Name="DateArret" Type="date" Mode="In" />
         </Function>
         <EntityContainer Name="CompteResultatModelStoreContainer">
+          <EntitySet Name="_TempExpData" EntityType="Self._TempExpData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AgeLabel" EntityType="Self.AgeLabel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Assureur" EntityType="Self.Assureur" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cadencier" EntityType="Self.Cadencier" Schema="dbo" store:Type="Tables" />
@@ -638,30 +637,6 @@ warning 6002: The table/view 'CompteResultat.dbo.IMReAssAss' does not have a pri
           <EntitySet Name="ReportTemplate" EntityType="Self.ReportTemplate" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SinistrePrev" EntityType="Self.SinistrePrev" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TypePrevoyance" EntityType="Self.TypePrevoyance" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="_TempExpData" EntityType="Self._TempExpData" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [_TempExpData].[Id] AS [Id], 
-    [_TempExpData].[ImportId] AS [ImportId], 
-    [_TempExpData].[AssureurName] AS [AssureurName], 
-    [_TempExpData].[Au] AS [Au], 
-    [_TempExpData].[Contrat] AS [Contrat], 
-    [_TempExpData].[CodCol] AS [CodCol], 
-    [_TempExpData].[AnneeExp] AS [AnneeExp], 
-    [_TempExpData].[LibActe] AS [LibActe], 
-    [_TempExpData].[LibFam] AS [LibFam], 
-    [_TempExpData].[TypeCas] AS [TypeCas], 
-    [_TempExpData].[NombreActe] AS [NombreActe], 
-    [_TempExpData].[Fraisreel] AS [Fraisreel], 
-    [_TempExpData].[Rembss] AS [Rembss], 
-    [_TempExpData].[RembAnnexe] AS [RembAnnexe], 
-    [_TempExpData].[RembNous] AS [RembNous], 
-    [_TempExpData].[Reseau] AS [Reseau], 
-    [_TempExpData].[MinFr] AS [MinFr], 
-    [_TempExpData].[MaxFr] AS [MaxFr], 
-    [_TempExpData].[MinNous] AS [MinNous], 
-    [_TempExpData].[MaxNous] AS [MaxNous]
-    FROM [dbo].[_TempExpData] AS [_TempExpData]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="_TempOtherFields" EntityType="Self._TempOtherFields" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [_TempOtherFields].[ImportId] AS [ImportId], 

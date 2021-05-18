@@ -22,7 +22,7 @@ namespace CompteResultat.DAL
         public string AssureurName { get; set; }
         public string GroupName { get; set; }
         public string GarantyName { get; set; }
-        public string CodeActe { get; set; }        
+        public string CodeActe { get; set; }
         public int OrderNumber { get; set; }
     }
 
@@ -77,7 +77,7 @@ namespace CompteResultat.DAL
         public string Assureur { get; set; }
         public string Company { get; set; }
         public string Subsid { get; set; }
-        public int YearSurv { get; set; }       
+        public int YearSurv { get; set; }
         public double? FR { get; set; }
         public double? RSS { get; set; }
         public double? RAnnexe { get; set; }
@@ -91,8 +91,16 @@ namespace CompteResultat.DAL
         public double Ratio { get; set; }
         public double GainLoss { get; set; }
         public DateTime DateArret { get; set; }
-      
+
         public double? Coef { get; set; }
+    }
+
+    public class CumulPresta
+    {
+        public string AssureurName { get; set; }
+        public int AnneeSoins { get; set; }
+        public int MoisReglement { get; set; }
+        public double? SommePresta { get; set; }
     }
 
     public class ExcelGlobalCotisatData

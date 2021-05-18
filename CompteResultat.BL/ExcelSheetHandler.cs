@@ -242,9 +242,9 @@ namespace CompteResultat.BL
                     newRow["CoeffCad"] = prest.Coef;
                     newRow["CotBrut"] = prest?.CotBrut ?? 0;
                     //newRow["TaxTotal"] = string.Format("{0:0.00} %", (TaxDef + TaxAct));
-                    newRow["TaxTotal"] = string.Format("{0:0.0000} %", tauxChargement);
-                    newRow["TaxDefault"] = string.Format("{0:0.00} %", TaxDef);
-                    newRow["TaxActive"] = string.Format("{0:0.00} %", TaxAct);
+                    //newRow["TaxTotal"] = string.Format("{0:0.0000} %", tauxChargement);
+                    //newRow["TaxDefault"] = string.Format("{0:0.00} %", TaxDef);
+                    //newRow["TaxActive"] = string.Format("{0:0.00} %", TaxAct);
                     //newRow["CotNet"] = Math.Round(cotNet, 2);
                     newRow["CotNet"] = prest.CotNet;
                     newRow["Ratio"] = Math.Round(ratio, 4);                    
@@ -283,9 +283,9 @@ namespace CompteResultat.BL
                     newRow["CoeffCad"] = prest?.Coef ?? 0;
                     newRow["CotBrut"] = prest?.CotBrut ?? 0;
                     //newRow["TaxTotal"] = string.Format("{0:0.00} %", (TaxDef + TaxAct));
-                    newRow["TaxTotal"] = string.Format("{0:0.0000} %", tauxChargement);
-                    newRow["TaxDefault"] = string.Format("{0:0.00} %", TaxDef);
-                    newRow["TaxActive"] = string.Format("{0:0.00} %", TaxAct);
+                    //newRow["TaxTotal"] = string.Format("{0:0.0000} %", tauxChargement);
+                    //newRow["TaxDefault"] = string.Format("{0:0.00} %", TaxDef);
+                    //newRow["TaxActive"] = string.Format("{0:0.00} %", TaxAct);
                     newRow["CotNet"] = Math.Round(prest.CotNet, 2);
                     newRow["Ratio"] = Math.Round(prest.Ratio, 4);
                     newRow["GainLoss"] = prest.GainLoss;
@@ -1033,14 +1033,14 @@ namespace CompteResultat.BL
         }
 
         //this is a temporary solution => get data from table _TempExpData and send them to excel
-        public static void FillExperienceSheet2(FileInfo excelFilePath, DateTime debutPeriod)
+        public static void FillExperienceSheet2(FileInfo excelFilePath, DateTime debutPeriod, DateTime finPeriod)
         {
             try
             {
                 //List<C_TempExpData> expData = new List<C_TempExpData>();
                 //expData = C_TempExpData.GetExpData(debutPeriod.Year);
 
-                List<C_TempExpData> expData = C_TempExpData.GetExpData(debutPeriod.Year);
+                List<C_TempExpData> expData = C_TempExpData.GetExpData(debutPeriod.Year, finPeriod.Year);
 
                 var expDataWithoutId = expData.Select(e => new
                 {
@@ -1120,8 +1120,8 @@ namespace CompteResultat.BL
                     //### get only values for Garanty Names: Second row, first column
                     for (int row = 2; row <= ws.Dimension.End.Row; row++)
                     {
-                        if(ws.Cells[row, 1].Value != null)
-                            garantyList.Add(ws.Cells[row, 1].Value.ToString());
+                        if(ws.Cells[row, 3].Value != null)
+                            garantyList.Add(ws.Cells[row, 3].Value.ToString());
                     }
                 }
 
@@ -1159,10 +1159,10 @@ namespace CompteResultat.BL
                         
                         newRow["MIN"] = minVal;
                         newRow["MAX"] = maxVal;
-                        newRow["Q1"] = totalElements > posQ1 ? fraisReelList[posQ1] : -1;
-                        newRow["Q2"] = totalElements > posQ1 ? fraisReelList[posQ2] : -1;
-                        newRow["Q3"] = totalElements > posQ1 ? fraisReelList[posQ3] : -1;
-                        newRow["Q4"] = totalElements > posQ1 ? fraisReelList[posQ4] : -1;
+                        newRow["Q1"] = totalElements > posQ1 ? fraisReelList[posQ1] : 0;
+                        newRow["Q2"] = totalElements > posQ1 ? fraisReelList[posQ2] : 0;
+                        newRow["Q3"] = totalElements > posQ1 ? fraisReelList[posQ3] : 0;
+                        newRow["Q4"] = totalElements > posQ1 ? fraisReelList[posQ4] : 0;
                         newRow["AVG"] = avgVal;
 
                         quartileTable.Rows.Add(newRow);
@@ -1171,13 +1171,13 @@ namespace CompteResultat.BL
                     {
                         //throw new Exception("THe Excel sheet for 'Quartiles' cannot be created, because no values were found for the following garanty: " + gar );
 
-                        newRow["MIN"] = -1;
-                        newRow["MAX"] = -1;
-                        newRow["Q1"] = -1;
-                        newRow["Q2"] = -1;
-                        newRow["Q3"] = -1;
-                        newRow["Q4"] = -1;
-                        newRow["AVG"] = -1;
+                        newRow["MIN"] = 0;
+                        newRow["MAX"] = 0;
+                        newRow["Q1"] = 0;
+                        newRow["Q2"] = 0;
+                        newRow["Q3"] = 0;
+                        newRow["Q4"] = 0;
+                        newRow["AVG"] = 0;
 
                         quartileTable.Rows.Add(newRow);
                     }
@@ -1189,7 +1189,7 @@ namespace CompteResultat.BL
                     //pck.Workbook.Worksheets[C.cEXCELQUARTILE].DeleteRow(2, C.cNUMBROWSDELETEEXCEL);
 
                     ExcelWorksheet ws = pck.Workbook.Worksheets[C.cEXCELQUARTILE];
-                    ws.Cells["B2"].LoadFromDataTable(quartileTable, false);
+                    ws.Cells["D2"].LoadFromDataTable(quartileTable, false);
                     pck.Save();
                 }
             }
@@ -1281,12 +1281,12 @@ namespace CompteResultat.BL
                         ws.Cells["A2"].Value = calculProvision.Value == true ? "OUI" : "NON";
                     }
 
-                    if (TaxDef.HasValue)
-                        ws.Cells["Q2"].Value = TaxDef/100; 
-                    if (TaxAct.HasValue)
-                        ws.Cells["R2"].Value = TaxAct/100;
-                    if (TaxPer.HasValue)
-                        ws.Cells["S2"].Value = TaxPer/100;
+                    //if (TaxDef.HasValue)
+                    //    ws.Cells["Q2"].Value = TaxDef/100; 
+                    //if (TaxAct.HasValue)
+                    //    ws.Cells["R2"].Value = TaxAct/100;
+                    //if (TaxPer.HasValue)
+                    //    ws.Cells["S2"].Value = TaxPer/100;
 
                     ws.Cells["M2"].Value = debutPeriode.ToShortDateString();
                     ws.Cells["N2"].Value = finPeriode.ToShortDateString();
@@ -1480,53 +1480,11 @@ namespace CompteResultat.BL
             }
         }
         
-        private static void CollectPrestaData(FileInfo excelFilePath, CRPlanning crp, List<PrestSante> myPrestData, C.eExcelSheetPrestaData excelSheet)
+
+        public static List<ExcelPrestaSheet> GenerateModifiedPrestData(List<PrestSante> myPrestData)
         {
             try
             {
-                string myExcelSheet = C.cEXCELPREST;                
-                List<Cadencier> cadencierAll = new List<Cadencier>();                
-
-                switch (excelSheet)
-                {
-                    case C.eExcelSheetPrestaData.Prestation:
-                        myExcelSheet = C.cEXCELPREST;
-                        break;
-                    case C.eExcelSheetPrestaData.Experience:
-                        myExcelSheet = C.cEXCELEXP;
-                        break;
-                    case C.eExcelSheetPrestaData.Provision:
-                        myExcelSheet = C.cEXCELPROV;
-                        break;
-                    default:
-                        myExcelSheet = C.cEXCELPREST;
-                        break;
-                }
-
-                if (myExcelSheet == C.cEXCELPROV)
-                {
-                    //myCad = Cadencier.GetCadencierForAssureurId(25);
-
-                    List<string> assList = myPrestData.OrderBy(p => p.AssureurName).Select(p => p.AssureurName).Distinct().ToList();
-                    List<Cadencier> cadencierForAssureur = new List<Cadencier>();
-                    cadencierAll = Cadencier.GetCadencierForAssureur(C.cDEFAULTASSUREUR);
-
-                    foreach (string assurName in assList)
-                    {
-                        if (assurName != C.cDEFAULTASSUREUR)
-                        {
-                            cadencierForAssureur = Cadencier.GetCadencierForAssureur(assurName);
-                            cadencierAll.AddRange(cadencierForAssureur);
-                        }
-                    }
-                }
-                
-
-               // string mycsv = CsvSerializer.SerializeToCsv(myPrestData);
-
-
-                DataTable prestaTable = CreatePrestaPrevExpTable(myExcelSheet);
-
                 //CodeCol = p.Select(pr=>pr.CodeCol).First(),
                 List<ExcelPrestaSheet> excelPrestDataSmall = myPrestData
                            .GroupBy(p => new
@@ -1606,7 +1564,7 @@ namespace CompteResultat.BL
 
                 foreach (ExcelPrestaSheet dat in excelPrestDataLarge)
                 {
-                    var item = excelPrestDataSmall.FirstOrDefault(i => i.DateSoins == dat.DateSoins && i.GroupName==dat.GroupName && i.GarantyName == dat.GarantyName
+                    var item = excelPrestDataSmall.FirstOrDefault(i => i.DateSoins == dat.DateSoins && i.GroupName == dat.GroupName && i.GarantyName == dat.GarantyName
                         && i.CAS == dat.CAS && i.Reseau == dat.Reseau);
 
                     if (item != null)
@@ -1615,9 +1573,68 @@ namespace CompteResultat.BL
                         dat.MaxFR = item.MaxFR;
                         dat.MinNous = item.MinNous;
                         dat.MaxNous = item.MaxNous;
-                        
+
                     }
                 }
+
+                return excelPrestDataLarge;
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error :: GenerateModifiedPrestData : " + ex.Message);
+                throw ex;
+            }
+
+        }
+                 
+
+        private static void CollectPrestaData(FileInfo excelFilePath, CRPlanning crp, List<PrestSante> myPrestData, C.eExcelSheetPrestaData excelSheet)
+        {
+            try
+            {
+                string myExcelSheet = C.cEXCELPREST;                
+                List<Cadencier> cadencierAll = new List<Cadencier>();                
+
+                switch (excelSheet)
+                {
+                    case C.eExcelSheetPrestaData.Prestation:
+                        myExcelSheet = C.cEXCELPREST;
+                        break;
+                    case C.eExcelSheetPrestaData.Experience:
+                        myExcelSheet = C.cEXCELEXP;
+                        break;
+                    case C.eExcelSheetPrestaData.Provision:
+                        myExcelSheet = C.cEXCELPROV;
+                        break;
+                    default:
+                        myExcelSheet = C.cEXCELPREST;
+                        break;
+                }
+
+                if (myExcelSheet == C.cEXCELPROV)
+                {
+                    //myCad = Cadencier.GetCadencierForAssureurId(25);
+
+                    List<string> assList = myPrestData.OrderBy(p => p.AssureurName).Select(p => p.AssureurName).Distinct().ToList();
+                    List<Cadencier> cadencierForAssureur = new List<Cadencier>();
+                    cadencierAll = Cadencier.GetCadencierForAssureur(C.cDEFAULTASSUREUR);
+
+                    foreach (string assurName in assList)
+                    {
+                        if (assurName != C.cDEFAULTASSUREUR)
+                        {
+                            cadencierForAssureur = Cadencier.GetCadencierForAssureur(assurName);
+                            cadencierAll.AddRange(cadencierForAssureur);
+                        }
+                    }
+                }                
+
+               // string mycsv = CsvSerializer.SerializeToCsv(myPrestData);
+
+                DataTable prestaTable = CreatePrestaPrevExpTable(myExcelSheet);
+
+                //### get data from external function
+                List<ExcelPrestaSheet> excelPrestDataLarge = GenerateModifiedPrestData(myPrestData);
 
                 //foreach (PrestSante prest in myPrestData)
                 foreach (ExcelPrestaSheet prest in excelPrestDataLarge)
@@ -1631,7 +1648,7 @@ namespace CompteResultat.BL
                     if (excelSheet == C.eExcelSheetPrestaData.Experience)
                     {
                         int expYear = int.Parse(newRow["ANNEESOIN"].ToString());
-                        newRow["ANNEESOIN"] = expYear + 1;
+                        newRow["ANNEESOIN"] = expYear; // + 1;
                     }
 
 
@@ -1751,7 +1768,7 @@ namespace CompteResultat.BL
                 DataColumn RNous = new DataColumn("RNous", typeof(decimal));
                 DataColumn Provisions = new DataColumn("Provisions", typeof(decimal));
                 DataColumn CotBrut = new DataColumn("CotBrut", typeof(decimal));
-                DataColumn TaxTotal = new DataColumn("TaxTotal", typeof(string));
+                //DataColumn TaxTotal = new DataColumn("TaxTotal", typeof(string));
                 DataColumn CotNet = new DataColumn("CotNet", typeof(decimal));
                 DataColumn Ratio = new DataColumn("Ratio", typeof(decimal));
                 DataColumn GainLoss = new DataColumn("GainLoss", typeof(decimal));
@@ -1759,15 +1776,19 @@ namespace CompteResultat.BL
                 DataColumn FR = new DataColumn("FR", typeof(decimal));
                 DataColumn RSS = new DataColumn("RSS", typeof(decimal));
                 DataColumn RAnnexe = new DataColumn("RAnnexe", typeof(decimal));                
-                DataColumn TaxDefault = new DataColumn("TaxDefault", typeof(string));
-                DataColumn TaxActive = new DataColumn("TaxActive", typeof(string));
+                //DataColumn TaxDefault = new DataColumn("TaxDefault", typeof(string));
+                //DataColumn TaxActive = new DataColumn("TaxActive", typeof(string));
                 DataColumn DateArret = new DataColumn("DateArret", typeof(DateTime));
 
                 //myTable.Columns.AddRange(new DataColumn[] { Assureur, Company, Subsid, YearSurv, FR, RSS, RAnnexe, RNous, Provisions, CoeffCad, CotBrut, TaxTotal, TaxDefault, TaxActive,
                 //    CotNet, Ratio, GainLoss, DateArret });
 
-                myTable.Columns.AddRange(new DataColumn[] { Assureur, Company, Subsid, YearSurv, RNous, Provisions, CotBrut, TaxTotal, CotNet, Ratio, GainLoss, CoeffCad,
-                    FR, RSS, RAnnexe, TaxDefault, TaxActive, DateArret });
+                //with taxes
+                //myTable.Columns.AddRange(new DataColumn[] { Assureur, Company, Subsid, YearSurv, RNous, Provisions, CotBrut, TaxTotal, CotNet, Ratio, GainLoss, CoeffCad,
+                //    FR, RSS, RAnnexe, TaxDefault, TaxActive, DateArret });
+                //without Taxes
+                myTable.Columns.AddRange(new DataColumn[] { Assureur, Company, Subsid, YearSurv, RNous, Provisions, CotBrut, CotNet, Ratio, GainLoss, CoeffCad,
+                    FR, RSS, RAnnexe, DateArret });
 
                 //if (reportType == C.eReportTypes.GlobalEnt)
                 //    myTable.Columns.AddRange(new DataColumn[] { Assureur, Company, YearSurv, FR, RSS, RAnnexe, RNous, Provisions, CoeffCad, CotBrut, TaxTotal, TaxDefault, TaxActive,
